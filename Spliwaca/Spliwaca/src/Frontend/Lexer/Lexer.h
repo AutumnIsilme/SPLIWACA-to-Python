@@ -131,9 +131,9 @@ namespace Spliwaca
 			{u8"!",                   TokenType::Not},
 			{u8"AND",                 TokenType::And},
 			{u8"&&",                  TokenType::And},
-			{u8"∧",                  TokenType::And},
+			{u8"∧",                   TokenType::And},
 			{u8"OR",                  TokenType::Or},
-			{u8"∨",                  TokenType::Or},
+			{u8"∨",                   TokenType::Or},
 			{u8"||",                  TokenType::Or},
 			{u8"=",                   TokenType::Equal},
 			{u8"==",                  TokenType::Equal},
@@ -150,12 +150,12 @@ namespace Spliwaca
 			{u8"<=",                  TokenType::LessThanEqual},
 			{u8"≤",                   TokenType::LessThanEqual},
 			{u8"⩽",                   TokenType::LessThanEqual},
-			{u8"≦",                  TokenType::LessThanEqual},
+			{u8"≦",                   TokenType::LessThanEqual},
 			{u8"≯",                   TokenType::LessThanEqual},
 			{u8"⩾",                   TokenType::GreaterThanEqual},
 			{u8">=",                  TokenType::GreaterThanEqual},
 			{u8"≥",                   TokenType::GreaterThanEqual},
-			{u8"≧",                  TokenType::GreaterThanEqual},
+			{u8"≧",                   TokenType::GreaterThanEqual},
 			{u8"≮",                   TokenType::GreaterThanEqual},
 			{u8"*",                   TokenType::Multiply},
 			{u8"**",                  TokenType::Power},
@@ -244,8 +244,8 @@ namespace Spliwaca
 			{u8"NOBARE",              TokenType::NoBare}
 			/*{"\f",                  TokenType::Whitespace},
 			//{"\u200b",              TokenType::Whitespace},
-			{"\t",                  TokenType::Whitespace},
-			{" ",                   TokenType::Whitespace}*/
+			{"\t",                    TokenType::Whitespace},
+			{" ",                     TokenType::Whitespace}*/
 		};
 	};
 }

@@ -37,6 +37,7 @@ bool charInStr(const std::string& s, char c);
 
 #include "Log.h"
 
+/*
 namespace Supernova
 {
 	using FloatingPointMicroseconds = std::chrono::duration<double, std::micro>;
@@ -185,25 +186,12 @@ namespace Supernova
 		std::chrono::microseconds m_Elapsed;
 		bool m_Stopped;
 	};
-}
+}*/
 
-#define SN_ENABLE_PROFILING 0
-#if SN_ENABLE_PROFILING
-#define _TOKEN_PASTE2(x, y) x##y
-#define _TOKEN_PASTE(x, y) _TOKEN_PASTE2(x, y)
-#define SN_PROFILE_BEGIN_SESSION(name, filepath) ::Supernova::Instrumentor::Get().BeginSession(name, filepath)
-#define SN_PROFILE_END_SESSION() ::Supernova::Instrumentor::Get().EndSession();
-#define SN_PROFILE_SCOPE(name)   ::Supernova::InstrumentationTimer _TOKEN_PASTE(timer_, __LINE__)(name)
-#define SN_PROFILE_FUNCTION()    SN_PROFILE_SCOPE(__FUNCSIG__)
-#else
-#define SN_PROFILE_BEGIN_SESSION(name, filepath)
-#define SN_PROFILE_END_SESSION()
-#define SN_PROFILE_SCOPE(name)
-#define SN_PROFILE_FUNCTION()
-#endif
+#include <Instrumentor.h>
 
-#define SN_ENABLE_TIMERS 1
-#if SN_ENABLE_TIMERS
+#define ENABLE_TIMERS 1
+#if ENABLE_TIMERS
 class Timer
 {
 public:

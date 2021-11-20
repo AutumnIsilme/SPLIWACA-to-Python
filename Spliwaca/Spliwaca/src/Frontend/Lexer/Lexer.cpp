@@ -42,7 +42,7 @@ namespace Spliwaca
     Lexer::Lexer(std::string fileLocation)
         : m_Tokens(new std::vector<std::shared_ptr<Token>>()), m_FileLocation(fileLocation)
     {
-        SN_PROFILE_FUNCTION();
+        PROFILE_FUNCTION();
         SPLW_INFO("Beginning file open");
         std::ifstream file;
         file.open(m_FileLocation);
@@ -160,13 +160,13 @@ namespace Spliwaca
             }
             else
             {
-                SN_PROFILE_SCOPE("Catch idents and numbers");
+                //PROFILE_SCOPE("Catch idents and numbers");
                 std::smatch m;
                 //Use regexes
                 bool number = false;
                 if ((tokenContents[tokenContents.size() - 1] == 'i' || (tokenContents[tokenContents.size() - 1] <= '9' && tokenContents[tokenContents.size() - 1] >= '0')) && tokenContents[0] <= '9' && tokenContents[0] >= '0')
                 {
-                    SN_PROFILE_SCOPE("Check for number");
+                    //PROFILE_SCOPE("Check for number");
                     
                     if (std::regex_search(tokenContents, m, std::regex("(\\d+_*)+")) && m[0] == tokenContents) // Matches int regex
                     {
@@ -197,7 +197,7 @@ namespace Spliwaca
                     }
                 }
                 if (!number) {
-                    SN_PROFILE_SCOPE("Check ident validity");
+                    //PROFILE_SCOPE("Check ident validity");
                     char invalidChars[] = { '~', '\\', ';', '#', '$', '@', '`', ',', '?', '!', '%', '^', '<', '|', '\'', '&', ')', '*', '/', '+', '[', ']', '.', '"', '=', '{', '}', ':', '>', '(', '-'};
                     int i = -1;
                     for (char c : tokenContents) {

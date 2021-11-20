@@ -24,7 +24,7 @@ namespace Spliwaca
 
 	std::string Generator::GenerateCode(int& errorCode)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		m_Code = "import libsplw\nscope_vars = libsplw.default_scope.copy()\n\n";
 
 		if (m_EntryPoint->require && m_EntryPoint->require->requireType->GetContents() == "transpiler_py")
@@ -56,7 +56,7 @@ namespace Spliwaca
 	{
 		for (std::shared_ptr<Statement> s : statements->statements)
 		{
-			SN_PROFILE_SCOPE("Statement loop - Generator::GenerateStatements(std::shared_ptr<Statements>)");
+			PROFILE_SCOPE("Statement loop - Generator::GenerateStatements(std::shared_ptr<Statements>)");
 			ImportConfig* importConfig = getCurrentImportConfig();
 			switch (s->statementType)
 			{
@@ -86,7 +86,7 @@ namespace Spliwaca
 
 	void Generator::GenerateIf(std::shared_ptr<IfNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		for (uint32_t i = 0; i < node->conditions.size(); i++)
 		{
 			if (i == 0)
@@ -122,7 +122,7 @@ namespace Spliwaca
 
 	void Generator::GenerateSet(std::shared_ptr<SetNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		if (node->id->accessPresent)
 		{
 			bool interpreter_var = false;
@@ -144,7 +144,7 @@ namespace Spliwaca
 
 	void Generator::GenerateInput(std::shared_ptr<InputNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		if (node->id->accessPresent)
 		{
 			bool interpreter_var = false;
@@ -174,13 +174,13 @@ namespace Spliwaca
 
 	void Generator::GenerateOutput(std::shared_ptr<OutputNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		m_Code += m_Tabs + "print(" + ParseRaw(node->raw) + ")";
 	}
 
 	void Generator::GenerateInc(std::shared_ptr<IncNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		if (node->id->accessPresent)
 		{
 			bool interpreter_var = false;
@@ -202,7 +202,7 @@ namespace Spliwaca
 
 	void Generator::GenerateDec(std::shared_ptr<DecNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		if (node->id->accessPresent)
 		{
 			bool interpreter_var = false;
@@ -224,7 +224,7 @@ namespace Spliwaca
 
 	void Generator::GenerateFor(std::shared_ptr<ForNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		if (node->id->accessPresent)
 		{
 			bool interpreter_var = false;
@@ -255,7 +255,7 @@ namespace Spliwaca
 
 	void Generator::GenerateWhile(std::shared_ptr<WhileNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		m_Code += m_Tabs + "while "; GenerateBinOp(node->condition); m_Code += ": # Source line " + std::to_string(node->lineNumber + 1) + "\n";
 		m_Tabs += "    ";
 
@@ -266,7 +266,7 @@ namespace Spliwaca
 
 	void Generator::GenerateQuit(std::shared_ptr<QuitNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		m_Code += m_Tabs + "exit(";
 		if (node->returnVal)
 			GenerateAtom(node->returnVal);
@@ -275,7 +275,7 @@ namespace Spliwaca
 
 	void Generator::GenerateCall(std::shared_ptr<CallNode> node, bool statement)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		if (statement)
 			m_Code += m_Tabs;
 		GenerateExpr(node->function);
@@ -310,7 +310,7 @@ namespace Spliwaca
 
 	void Generator::GenerateFunc(std::shared_ptr<FuncNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		std::string func_name = "__func_name_line_" + std::to_string(node->id->GetLineNumber()) + "_char_" + std::to_string(node->id->GetColumnNumber());
 		m_Code += m_Tabs + "@libsplw.type_check()\ndef " + func_name + "(prev_scope_vars: dict";
 
@@ -364,7 +364,7 @@ namespace Spliwaca
 
 	void Generator::GenerateProc(std::shared_ptr<ProcNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		std::string func_name = "__func_name_line_" + std::to_string(node->id->GetLineNumber()) + "_char_" + std::to_string(node->id->GetColumnNumber());
 		m_Code += m_Tabs + "@libsplw.type_check()\ndef " + func_name + "(prev_scope_vars: dict";
 
@@ -413,7 +413,7 @@ namespace Spliwaca
 
 	void Generator::GenerateStruct(std::shared_ptr<StructNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		//scope_vars['A'] = libsplw.make_struct_class(('x', 'y', 'z'), {'x':int, 'y':int, 'z':int}, 'A')
 		if (node->id->accessPresent)
 		{
@@ -457,13 +457,13 @@ namespace Spliwaca
 
 	void Generator::GenerateReturn(std::shared_ptr<ReturnNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		m_Code += m_Tabs + "return "; GenerateList(node->list);
 	}
 
 	void Generator::GenerateImport(std::shared_ptr<ImportNode> node)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		m_Code += m_Tabs + "import " + node->id->GetContents();
 	}
 
@@ -850,7 +850,7 @@ namespace Spliwaca
 	bool validIdentifier(std::string id)
 	{
 		//If the last character is 'i' or a digit, then check regexes. Otherwise, just do the loop.
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		std::smatch m;
 		if (id[id.size() - 1] == 'i' || (id[id.size() - 1] >= '0' && id[id.size() - 1] <= '9'))
 		{
@@ -875,7 +875,7 @@ namespace Spliwaca
 
 	std::string Generator::ParseRaw(std::shared_ptr<Token> token)
 	{
-		SN_PROFILE_FUNCTION();
+		PROFILE_FUNCTION();
 		std::string code = "fr\"";
 		bool inIdent = false;
 		IdentNode identNode = IdentNode();
@@ -883,10 +883,10 @@ namespace Spliwaca
 		std::string contents = token->GetContents();
 		for (char c : contents)
 		{
-			SN_PROFILE_SCOPE("Token contents loop - Generator::ParseRaw(std::shared_ptr<Token>)");
+			PROFILE_SCOPE("Token contents loop - Generator::ParseRaw(std::shared_ptr<Token>)");
 			if (inIdent)
 			{
-				SN_PROFILE_SCOPE("inIdent - Generator::ParseRaw(std::shared_ptr<Token>)");
+				PROFILE_SCOPE("inIdent - Generator::ParseRaw(std::shared_ptr<Token>)");
 				if (c == ' ')
 				{
 					if (validIdentifier(ident))

@@ -69,7 +69,7 @@ project "Spliwaca"
 		
 		defines
 		{
-			"SN_PLATFORM_WINDOWS",
+			"PLATFORM_WINDOWS",
 			"SN_BUILD_DLL",
 			"GLFW_INCLUDE_NONE"
 		}
@@ -137,18 +137,18 @@ project "Sandbox"
 		
 		defines
 		{
-			"SN_PLATFORM_WINDOWS",
+			"PLATFORM_WINDOWS",
 		}
 		
 	filter "configurations:Debug"
-		defines "SN_DEBUG"
+		defines "DEBUG"
 		symbols "on"
 		
 	filter "configurations:Release"
-		defines "SN_RELEASE"
+		defines "RELEASE"
 		optimize "on"
 	
 	filter "configurations:Dist"
-		defines "SN_DIST"
+		defines "DIST"
 		optimize "on"
 ]]

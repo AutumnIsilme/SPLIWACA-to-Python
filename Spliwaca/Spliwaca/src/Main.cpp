@@ -130,57 +130,62 @@ bool itemInVect(const std::vector<T>& v, T t)
 
 //------------------------------------- End UtilFunctions utility function definitions -------------------------------
 
+enum TranspileTarget {
+	NONE = 0,
+	PYTHON = 1,
+	LLVM = 2,
+
+	TRANSPILE_TARGET_MAX = LLVM
+};
+
 struct transpilerOptions
 {
 	std::string ifile;
 	std::string ofile;
 	bool recursive_transpile;
+	TranspileTarget transpile_target;
 };
+
+// @TODO: Expand to give all args
+void print_help_text() {
+	std::cout << "Usage: transpiler FILE [options]\n" <<
+	"Options:\n"
+	"    -o <filename>    | Write the compiler output to the filename provided\n"
+	"    -target=<target> | Set the compiler target. Options are:\n"
+	"                     |  - none\n"
+	"                     |  - python\n"
+	"                     |  - llvm\n";
+}
 
 transpilerOptions* parseCommandLineArgs(int argc, char** argv)
 {
-	SN_PROFILE_FUNCTION();
+	PROFILE_FUNCTION();
 	transpilerOptions* options = new transpilerOptions();
-	if (argc < 2)
+	if (argc < 2 || strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
 	{
-		std::cout << "Usage: transpiler FILE [-o OUTFILE]\n";
+		print_help_text();
 		exit(-1);
-	}
-	else if (argc > 2 && argc != 4)
-	{
-		std::cout << "Usage: transpiler FILE [-o OUTFILE]\n";
-		exit(-1);
-	}
-	else if (argc == 4 && strcmp(argv[2], "-o"))
-	{
-		std::cout << "Usage: transpiler FILE [-o OUTFILE]\n";
-		exit(-1);
-	}
-	else if (argc == 4)
-	{
-		options->ofile = argv[3];
-	}
-	else
-	{
-		options->ofile = "";
 	}
 	options->ifile = argv[1];
+	auto arg_index = 2;
+
+
+
 	return options;
 }
 
 int main(int argc, char** argv)
 {
-	SN_PROFILE_BEGIN_SESSION("Run", "splw-run.json");
-	SN_PROFILE_FUNCTION();
-	#if SN_ENABLE_TIMERS
-	Timer timer = Timer();
+	PROFILE_BEGIN_SESSION("Run", "splw-run.json");
+	PROFILE_FUNCTION();
+	#if ENABLE_TIMERS
+	//Timer timer = Timer();
 	#endif
 	transpilerOptions* options = parseCommandLineArgs(argc, argv);
 
-
 	/*
 	{
-		SN_PROFILE_SCOPE("Set up unicode output");
+		PROFILE_SCOPE("Set up unicode output");
 		#ifdef SPLW_WINDOWS
 		SetConsoleOutputCP(CP_UTF8);
 		setvbuf(stdout, nullptr, _IOFBF, 1000);
@@ -194,13 +199,13 @@ int main(int argc, char** argv)
 	Transpiler transpiler = Transpiler(options->ifile, options->ofile, state, printTokenList);
 	std::string output = transpiler.Run();
 
-	#if SN_ENABLE_PROFILING
-	timer_192.Stop();
-	std::cout << "#Total time taken: " << timer_192.Elapsed() << "ms" << std::endl;
+	#if ENABLE_PROFILING
+	//timer_180.Stop();
+	//std::cout << "#Total time taken: " << timer_192.Elapsed() << "ms" << std::endl;
 	#endif
-	#if SN_ENABLE_TIMERS
-	std::cout << "#Total time taken: " << timer.elapsed() << "s" << std::endl;
+	#if ENABLE_TIMERS
+	//std::cout << "#Total time taken: " << timer.elapsed() << "s" << std::endl;
 	#endif
-	SN_PROFILE_END_SESSION();
+	PROFILE_END_SESSION();
 	return 0;
 }

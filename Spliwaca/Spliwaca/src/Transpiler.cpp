@@ -7,19 +7,19 @@ namespace Spliwaca
 {
 	std::string Transpiler::Run()
 	{
-		SN_PROFILE_FUNCTION();
+		//PROFILE_FUNCTION();
 		//Timer lexerTimer = Timer();
-		#if SN_ENABLE_TIMERS
-		double lexerTime, parserTime, generatorTime;
+		#if ENABLE_TIMERS
+		double lexerTime, parserTime, typerTime, generatorTime;
 		#endif
 
 		std::shared_ptr<Lexer> lexer = nullptr;
 		std::shared_ptr<std::vector<std::shared_ptr<Token>>> tokens = nullptr;
 		{
-			#if SN_ENABLE_TIMERS
+			PROFILE_SCOPE("Lexer - Transpiler::Run");
+			#if ENABLE_TIMERS
 			Timer timer = Timer();
 			#endif
-			SN_PROFILE_SCOPE("Lexer - Transpiler::Run");
 			lexer = Lexer::Create(m_Filename);
 			SPLW_INFO("Created lexer.");
 			tokens = lexer->MakeTokens();
@@ -43,7 +43,7 @@ namespace Spliwaca
 			}
 			else
 				SPLW_INFO("Finished constructing tokens.");
-			#if SN_ENABLE_TIMERS
+			#if ENABLE_TIMERS
 			lexerTime = timer.elapsed();
 			#endif
 		}
@@ -70,10 +70,10 @@ namespace Spliwaca
 		//Timer parseTimer = Timer();
 		std::shared_ptr<Spliwaca::EntryPoint> ast;
 		{
-			#if SN_ENABLE_TIMERS
+			#if ENABLE_TIMERS
 			Timer timer = Timer();
 			#endif
-			SN_PROFILE_SCOPE("Parser - Transpiler::Run");
+			PROFILE_SCOPE("Parser - Transpiler::Run");
 			std::shared_ptr<Parser> parser = Parser::Create(tokens);
 			SPLW_INFO("Created Parser.");
 			ast = parser->ConstructAST();
@@ -112,20 +112,71 @@ namespace Spliwaca
 			}
 			else
 				SPLW_INFO("Finished syntax analysis.");
-			#if SN_ENABLE_TIMERS
+			#if ENABLE_TIMERS
 			parserTime = timer.elapsed();
 			#endif
 		}
+
+		// Typer
+		/*
+		{
+			#if ENABLE_TIMERS
+			Timer timer = Timer();
+			#endif
+			PROFILE_SCOPE("Typer - Transpiler::Run");
+			std::shared_ptr<Typer> typer = Typer::Create(tokens);
+			SPLW_INFO("Created Typer.");
+			ast = typer->ConstructAST();
+
+			uint32_t prevLineNumber = 0, prevColNumber = 0;
+			for (SyntaxError s : m_State->SyntaxErrors)
+			{
+				if (s.GetLineNumber() == prevLineNumber && s.GetColumnNumber() == prevColNumber)
+					continue;
+				else
+				{
+					prevLineNumber = s.GetLineNumber();
+					prevColNumber = s.GetColumnNumber();
+				}
+				SPLW_ERROR("Syntax Error code {2} at line {0}, column {1}", s.GetLineNumber(), s.GetColumnNumber(), s.GetErrorCode());
+				SPLW_ERROR(GetSyntaxErrorMessage(s.GetErrorCode()), TokenTypeName(s.GetTokenType()));
+				if (s.GetLineNumber() >= lexer->GetSplitFileString().size())
+					SPLW_WARN("Line {0} out of range!", s.GetLineNumber());
+				else
+					SPLW_WARN("{0}", lexer->GetSplitFileString().at(s.GetLineNumber()));
+				SPLW_WARN("{0}{1}", mulString(" ", (uint32_t)s.GetColumnNumber() - 1), mulString("^", (uint32_t)s.GetColumnSpan()));
+				std::cout << "\n";
+			}
+			if (m_State->SyntaxErrors.size() > 0)
+			{
+				SPLW_ERROR("Syntax errors present: cannot continue to next stage.");
+				//if (m_State->MissingVariables.size() == 0)
+				//{
+				//}
+				#ifdef SPLW_WINDOWS
+				system("PAUSE");
+				#else
+				//system("read -n 1 -s -p \"Press any key to continue...\n\"");
+				#endif
+				return "";
+			}
+			else
+				SPLW_INFO("Finished syntax analysis.");
+			#if ENABLE_TIMERS
+			typerTime = timer.elapsed();
+			#endif
+		}
+		*/
 
 		//double parseTime = parseTimer.elapsed();
 
 		//Timer generateTimer = Timer();
 		std::string finalCode;
 		{
-			#if SN_ENABLE_TIMERS
+			#if ENABLE_TIMERS
 			Timer timer = Timer();
 			#endif
-			SN_PROFILE_SCOPE("Generator");
+			PROFILE_SCOPE("Generator");
 			std::shared_ptr<PythonGenerator> codeGenerator = PythonGenerator::Create(ast);
 			SPLW_INFO("Created Generator");
 
@@ -139,7 +190,7 @@ namespace Spliwaca
 
 			if (m_Output != "")
 			{
-				SN_PROFILE_SCOPE("Generator file output");
+				PROFILE_SCOPE("Generator file output");
 				std::ofstream outputFile;
 				outputFile.open(m_Output, std::ios::trunc);
 				outputFile << finalCode << "\n";
@@ -147,10 +198,10 @@ namespace Spliwaca
 			}
 			else
 			{
-				SN_PROFILE_SCOPE("Generator cout output");
+				PROFILE_SCOPE("Generator cout output");
 				std::cout << finalCode << std::endl;
 			}
-			#if SN_ENABLE_TIMERS
+			#if ENABLE_TIMERS
 			generatorTime = timer.elapsed();
 			#endif
 		}
@@ -161,7 +212,7 @@ namespace Spliwaca
 
 		SPLW_INFO("Finished code output!");
 
-		#if SN_ENABLE_TIMERS
+		#if ENABLE_TIMERS
 		std::cout << "Lexer time: " << lexerTime << ", Parser time: " << parserTime << ", Generator time: " << generatorTime << std::endl;
 		#endif
 

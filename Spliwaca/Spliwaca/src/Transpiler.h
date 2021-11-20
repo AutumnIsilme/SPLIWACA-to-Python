@@ -3,6 +3,7 @@
 #include "Frontend/Lexer/LexicalError.h"
 #include "Frontend/Parser/Parser.h"
 #include "Frontend/Parser/SyntaxError.h"
+#include "Frontend/Parser/Typer.h"
 #include "Backend/Generation/Python/Generator.h"
 #include "Frontend/Parser/SemanticError.h"
 #include "UtilFunctions.h"
@@ -14,7 +15,7 @@ namespace Spliwaca
 	{
 		std::vector<LexicalError> LexerErrors;
 		std::vector<SyntaxError> SyntaxErrors;
-		//std::vector<MissingVariable> MissingVariables;
+		//std::vector<TypeError> TypeErrors;
 	};
 
 	class Transpiler
